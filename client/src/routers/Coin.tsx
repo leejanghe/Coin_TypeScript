@@ -151,10 +151,10 @@ function Coin({ isDark }: ICoinProps) {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId ? coinId : "")
-    // {
-    //   refetchInterval: 5000,
-    // }
+    () => fetchCoinTickers(coinId ? coinId : ""),
+    {
+      refetchInterval: 5000,
+    }
   );
   const loading = infoLoading || tickersLoading;
   // console.log(infoData);

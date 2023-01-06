@@ -18,10 +18,10 @@ function Price() {
   const { coinId } = params;
   const { isLoading, data } = useQuery<IHistoricalPrice[]>(
     ["price", coinId],
-    () => fetchCoinHistoryPrice(coinId ? coinId : "")
-    // {
-    //   refetchInterval: 10000,
-    // }
+    () => fetchCoinHistoryPrice(coinId ? coinId : ""),
+    {
+      refetchInterval: 10000,
+    }
   );
 
   return (
