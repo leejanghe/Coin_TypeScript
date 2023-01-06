@@ -1,19 +1,11 @@
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
-import {
-  Routes,
-  Route,
-  useLocation,
-  useParams,
-  useMatch,
-} from "react-router-dom";
+import { useLocation, useParams, useMatch } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
-import Chart from "./Chart";
-import Price from "./Price";
-
+import { MdOutlineArrowBackIosNew } from "react-icons/md";
 const Title = styled.h1`
   font-size: 48px;
   color: ${(props) => props.theme.accentColor};
@@ -40,7 +32,8 @@ const Header = styled.header`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  /* background-color: rgba(0, 0, 0, 0.5); */
+  background-color: ${(props) => props.theme.componentBgColor};
   padding: 20px 25px;
   border-radius: 10px;
 `;
@@ -76,7 +69,8 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.5);
+  /* background-color: rgba(0, 0, 0, 0.5); */
+  background-color: ${(props) => props.theme.componentBgColor};
   padding: 7px 0px;
   border-radius: 10px;
   color: ${(props) =>
@@ -141,7 +135,11 @@ interface PriceData {
   };
 }
 
-function Coin() {
+interface ICoinProps {
+  isDark: boolean;
+}
+
+function Coin({ isDark }: ICoinProps) {
   const { state } = useLocation();
   const { coinId } = useParams();
   const priceMatch = useMatch("/:coinId/price");
@@ -153,13 +151,13 @@ function Coin() {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId ? coinId : ""),
-    {
-      refetchInterval: 5000,
-    }
+    () => fetchCoinTickers(coinId ? coinId : "")
+    // {
+    //   refetchInterval: 5000,
+    // }
   );
   const loading = infoLoading || tickersLoading;
-
+  // console.log(infoData);
   return (
     <Container>
       <Helmet>
@@ -175,11 +173,12 @@ function Coin() {
           <Overview>
             <OverviewItem>
               <span>Home</span>
-              {/* <Link to="/"> */}
+
               <span>
-                <Link to="/">&#8592;</Link>
+                <Link to="/">
+                  <MdOutlineArrowBackIosNew />
+                </Link>
               </span>
-              {/* </Link> */}
             </OverviewItem>
             <OverviewItem>
               <span>Rank:</span>
@@ -191,7 +190,7 @@ function Coin() {
             </OverviewItem>
             <OverviewItem>
               <span>Price:</span>
-              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
+              <span>${tickersData?.quotes?.USD?.price?.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -207,7 +206,9 @@ function Coin() {
           </Overview>
           <Tabs>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`}>Chart</Link>
+              <Link to={`/${coinId}/chart`} state={state}>
+                Chart
+              </Link>
             </Tab>
             <Tab isActive={priceMatch !== null}>
               <Link to={`/${coinId}/price`}>Price</Link>
